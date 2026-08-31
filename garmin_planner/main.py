@@ -9,6 +9,7 @@ import datetime
 import sys
 import argparse
 import os
+import getpass
 
 __version__ = "0.1.0"
 
@@ -152,13 +153,9 @@ def scheduleWorkouts(startfrom: datetime, workouts: list, conn: Client):
 
 def main():
     logger.info(f"""Running Garmin Planner {__version__}""")
-    argparser = argparse.ArgumentParser(description="Garmin Planner")
-    argparser.add_argument('file_name', type=str, help='Input YAML file name')
-    args = argparser.parse_args()
-    file_name = args.file_name
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, file_name)
+    file_path = os.path.join(current_dir, "sampleInput.yaml")
     if not os.path.exists(file_path):
         logger.error(f"The file '{file_path}' does not exist.")
         sys.exit("Exited program due to yaml file not found")
@@ -168,17 +165,9 @@ def main():
     # default settings
     settings = {"deleteSameNameWorkout": False}
 
-    # preprocess secrets yaml file and get email and password
-    secrets = parseYaml(os.path.join(current_dir, "secrets.yaml"))
-    if not secrets:
-        logger.error("Failed to parse secrets.yaml")
-        sys.exit("Exiting: secrets.yaml not found.")
-    if ("email" not in secrets) or ("password" not in secrets):
-        logger.error("Missing 'email' or 'password' in YAML input.")
-        sys.exit("Exiting: 'email' or 'password' not found.")
 
-    email = secrets['email']
-    password = secrets['password']
+    email = input("Enter your email: ")
+    password = getpass.getpass('Enter your password: ')
     garminCon = Client(email,password)
 
     # parse input yaml file
@@ -200,7 +189,7 @@ def main():
                        conn=garminCon)
     if "schedulePlan" in data:
         schedulePlan = data['schedulePlan']
-        startDate = schedulePlan['start_from']
+        startDate = datetime.datetime.strptime(schedulePlan['start_from'],'%Y-%m-%d')
         workouts = schedulePlan['workouts']
         scheduleWorkouts(startDate, workouts, garminCon)
 

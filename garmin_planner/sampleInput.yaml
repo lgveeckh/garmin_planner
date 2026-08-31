@@ -2,64 +2,158 @@ settings:
   deleteSameNameWorkout: true
 
 definitions:
-  GA: 6:35-7:00
-  Threshold: 5:20-5:45
-  Interval: 4:45-5:18
-  Repetition: 4:33-5:03
-  VO2MaxP: 3:30-4:00
-  EasyP: 5:00-6:00
+  EasyPace: "7:45-8:15"
+  TargetPace: "7:00-7:30"
+  SurgePace: "6:45-7:15"
 
-# define workouts here
 workouts:
-  interval_Vo2Max:
-    - warmup: 15min @H(z2)
+  # PHASE 1: AEROBIC ADAPTATION (WEEKS 1-3)
+  w1_interval:
+    - warmup: 5min
+    - repeat(10):
+        - run: 1min @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
+
+  w1_long_interval:
+    - warmup: 5min
+    - repeat(6):
+        - run: 2min @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
+
+  w2_interval:
+    - warmup: 5min
     - repeat(8):
-      - run: 30sec @P($VO2MaxP)
-      - recovery: 1200m
-    - cooldown: 15min @H(z2)
-  e_16k:
-    - warmup: 2000m @H(z2)
-    - run: 12000m @P($GA)
-    - cooldown: 2000m @H(z2)
-  e_14k:
-    - warmup: 2000m @H(z2)
-    - run: 10000m @P($GA)
-    - cooldown: 2000m @H(z2)
-  ga_10k:
-    - warmup: 1000m @H(z2)
-    - run: 8000m @P($GA)
-    - cooldown: 1000m @H(z2)
-  ga_8k:
-    - warmup: 2000m @H(z2)
-    - run: 4000m @P($GA)
-    - cooldown: 2000m @H(z2)
-  ga_5k:
-    - warmup: 1000m @H(z2)
-    - run: 3000m @P($GA)
-    - cooldown: 1000m @H(z2)
-  ga_6k:
-    - warmup: 1000m @H(z2)
-    - run: 4000m @P($GA)
-    - cooldown: 1000m @H(z2)
+        - run: 90sec @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
 
-# schedule workouts
+  w2_long_interval:
+    - warmup: 5min
+    - repeat(5):
+        - run: 3min @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
+
+  w3_interval:
+    - warmup: 5min
+    - repeat(6):
+        - run: 3min @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
+
+  w3_pace_work:
+    - warmup: 5min
+    - repeat(4):
+        - run: 4min @P($TargetPace)
+        - recovery: 90sec
+    - cooldown: 5min
+
+  w3_continuous_2_5k:
+    - warmup: 5min
+    - run: 2500m @P($EasyPace)
+    - cooldown: 5min
+
+  # PHASE 2: CONTINUOUS DISTANCE & TARGET PACE (WEEKS 4-6)
+  w4_pace_intervals:
+    - warmup: 5min
+    - repeat(3):
+        - run: 1000m @P($TargetPace)
+        - recovery: 2min
+    - cooldown: 5min
+
+  w4_easy_20min:
+    - warmup: 5min
+    - run: 20min @P($EasyPace)
+    - cooldown: 5min
+
+  w4_continuous_3_5k:
+    - warmup: 5min
+    - run: 3500m @P($EasyPace)
+    - cooldown: 5min
+
+  w5_speed_endurance:
+    - warmup: 5min
+    - repeat(4):
+        - run: 800m @P($SurgePace)
+        - recovery: 90sec
+    - cooldown: 5min
+
+  w5_easy_25min:
+    - warmup: 5min
+    - run: 2500m @P($EasyPace)
+    - cooldown: 5min
+
+  w5_continuous_4_2k:
+    - warmup: 5min
+    - run: 4200m @P($TargetPace)
+    - cooldown: 5min
+
+  w6_taper_2k:
+    - warmup: 5min
+    - run: 2000m @P($TargetPace)
+    - cooldown: 5min
+
+  w6_shakeout:
+    - warmup: 5min
+    - run: 15min @P($EasyPace)
+    - cooldown: 5min
+
+  w6_5k_race_day:
+    - run: 5000m @P($TargetPace)
+
 schedulePlan:
-  start_from: 2024-10-08
-  workouts: 
-    # week 1
-    - ga_10k
-    - ga_5k
-    - ga_6k
+  start_from: "2026-09-02" # Starts Monday, Aug 31 -> Ends Monday, Oct 12
+  workouts:
+    # Week 1
+    - w1_interval       # Thu, Sep 3
     - rest
-    - e_14k
-    - rest 
-    - ga_10k
+    - w1_long_interval  # Sun, Sep 6
+    - rest
+    - rest
 
-    # week 2
-    - ga_5k
-    - ga_8k
+    # Week 2
+    - w2_interval       # Tue, Sep 8
     - rest
-    - ga_10k
-    - e_16k
-    - rest 
-    - ga_10k
+    - w2_interval       # Thu, Sep 10
+    - rest
+    - w2_long_interval  # Sun, Sep 13
+    - rest
+    - rest
+
+    # Week 3
+    - w3_interval       # Tue, Sep 15
+    - rest
+    - w3_pace_work      # Thu, Sep 17
+    - rest
+    - w3_continuous_2_5k # Sun, Sep 20
+    - rest
+    - rest
+
+    # Week 4
+    - w4_pace_intervals # Tue, Sep 22
+    - rest
+    - w4_easy_20min     # Thu, Sep 24
+    - rest
+    - w4_continuous_3_5k # Sun, Sep 27
+    - rest
+    - rest
+
+    # Week 5
+    - w5_speed_endurance # Tue, Sep 29
+    - rest
+    - w5_easy_25min      # Thu, Oct 1
+    - rest
+    - w5_continuous_4_2k # Sun, Oct 4
+    - rest
+    - rest
+
+    # Week 6 (Race Week)
+    - rest
+    - w6_taper_2k       # Tue, Oct 6
+    - rest
+    - rest
+    - w6_shakeout       # Thu, Oct 8
+    - rest
+    - w6_5k_race_day    # Mon, Oct 12 (Scheduled for target date!)

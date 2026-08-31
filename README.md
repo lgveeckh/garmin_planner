@@ -84,8 +84,10 @@ Follow these steps to set up the project locally:
 
 2. **Install dependencies:**
     ```bash
+    python -m venv .venv
+    .venv/Scripts/Activate.ps1
     pip install -r requirements.txt
 
 3. **Run the program:**
     ```bash
-    python -m garmin_planner sampleInput.yaml
+    python ./main.py
