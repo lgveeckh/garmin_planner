@@ -1,100 +1,128 @@
+# 6-week 5k plan
+# Built for: a slow-but-experienced cyclist, running for ~2 weeks so far,
+# currently able to run 2min @ EasyPace with a 1min walk recovery.
+# Race: Sunday, Oct 11, 2026 (5k)
+#
+# Design notes:
+# - Progression is run/walk based (extend the run segment, hold the walk
+#   segment) until continuous running is established (week 4), then it
+#   becomes a distance/duration build, with pace-specific work introduced
+#   only once, from week 5, and never faster than TargetPace.
+# - Only ever one harder/pace-specific session per week; the other two
+#   sessions in that week stay at EasyPace.
+# - Every step is a single duration-or-distance + single pace, so it
+#   imports cleanly as a structured workout (e.g. into Garmin Connect).
+# - Weeks 1-3 vary the interval shape session-to-session (more reps, less
+#   recovery, or longer efforts in turn) so every session feels like a
+#   small step up rather than three identical repeats of the same workout.
+
 definitions:
   EasyPace: "7:45-8:15"
   TargetPace: "7:00-7:30"
 
 workouts:
-  # PHASE 1: AEROBIC ADAPTATION (WEEKS 1-3)
-  w1_interval:
-    - warmup: 5min
-    - repeat(10):
-        - run: 1min @P($EasyPace)
-        - recovery: 1min
-    - cooldown: 5min
-
-  w1_long_interval:
+  # WEEK 1 - two sessions, second nudges up via one extra rep (same interval
+  # difficulty, just "one more than last time" - the gentlest possible
+  # felt-progress marker)
+  w1a_runwalk:
     - warmup: 5min
     - repeat(6):
         - run: 2min @P($EasyPace)
         - recovery: 1min
     - cooldown: 5min
 
-  w2_interval:
+  w1b_runwalk:
     - warmup: 5min
-    - repeat(8):
-        - run: 90sec @P($EasyPace)
+    - repeat(7):
+        - run: 2min @P($EasyPace)
         - recovery: 1min
     - cooldown: 5min
 
-  w2_long_interval:
+  # WEEK 2 - each session varies a different axis: interval length, then
+  # recovery length, then interval length again
+  w2a_runwalk:
     - warmup: 5min
     - repeat(5):
         - run: 3min @P($EasyPace)
         - recovery: 1min
     - cooldown: 5min
 
-  w3_interval:
+  w2b_runwalk_shortrest:
     - warmup: 5min
-    - repeat(6):
+    - repeat(5):
         - run: 3min @P($EasyPace)
+        - recovery: 45sec
+    - cooldown: 5min
+
+  w2c_runwalk:
+    - warmup: 5min
+    - repeat(4):
+        - run: 4min @P($EasyPace)
         - recovery: 1min
     - cooldown: 5min
 
-  w3_pace_work:
+  # WEEK 3 - shorter recovery again, then longer single efforts, then a
+  # finisher that previews week 4's continuous running with an unbroken
+  # 8min close
+  w3a_runwalk_shortrest:
     - warmup: 5min
     - repeat(4):
-        - run: 3min @P($EasyPace)
+        - run: 4min @P($EasyPace)
         - recovery: 45sec
-    - repeat(2):
-        - run: 30sec @P($TargetPace)
-        - recovery: 90sec
     - cooldown: 5min
 
-  w3_continuous_2_5k:
-    - warmup: 5min
-    - run: 2500m @P($EasyPace)
-    - cooldown: 5min
-
-  # PHASE 2: CONTINUOUS DISTANCE & TARGET PACE (WEEKS 4-6)
-  w4_pace_intervals:
+  w3b_runwalk_long:
     - warmup: 5min
     - repeat(3):
-        - run: 1000m @P($TargetPace)
-        - recovery: 2min
+        - run: 5min @P($EasyPace)
+        - recovery: 1min
     - cooldown: 5min
 
-  w4_easy_20min:
+  w3c_runwalk_finisher:
+    - warmup: 5min
+    - repeat(2):
+        - run: 6min @P($EasyPace)
+        - recovery: 1min
+    - run: 8min @P($EasyPace)
+    - cooldown: 5min
+
+  # WEEK 4 - transition from intervals to continuous running
+  w4_runwalk_long:
+    - warmup: 5min
+    - repeat(3):
+        - run: 8min @P($EasyPace)
+        - recovery: 1min
+    - cooldown: 5min
+
+  w4_continuous_20min:
     - warmup: 5min
     - run: 20min @P($EasyPace)
     - cooldown: 5min
 
-  w4_continuous_3_5k:
+  w4_continuous_3k:
+    - warmup: 5min
+    - run: 3000m @P($EasyPace)
+    - cooldown: 5min
+
+  # WEEK 5 - build distance, first (and only) taste of race pace
+  w5_continuous_3_5k:
     - warmup: 5min
     - run: 3500m @P($EasyPace)
     - cooldown: 5min
 
-  w5_tempo_reps:
-    # Replaces the old surge-pace (faster-than-race-pace) session, which is
-    # too demanding for a runner still in their first two months of running.
-    # Same purpose (a bit of quality mid-week) but capped at TargetPace.
+  w5_pace_reps:
     - warmup: 5min
     - repeat(3):
         - run: 500m @P($TargetPace)
         - recovery: 2min
     - cooldown: 5min
 
-  w5_easy_4k:
-    # NEW: bridges the old jump from 3.5k-easy straight to 4k-at-target-pace.
-    # Same distance as the pace workout below, but at EasyPace, so the
-    # runner has already covered 4k continuously before doing it at speed.
+  w5_continuous_4k:
     - warmup: 5min
     - run: 4000m @P($EasyPace)
     - cooldown: 5min
 
-  w5_continuous_4k:
-    - warmup: 5min
-    - run: 4000m @P($TargetPace)
-    - cooldown: 5min
-
+  # WEEK 6 - taper
   w6_taper_2k:
     - warmup: 5min
     - run: 2000m @P($TargetPace)
@@ -115,54 +143,56 @@ schedulePlan:
   training_days: [Monday, Wednesday, Saturday]
   max_sessions_per_week: 3
   if_missed: "skip the session - do not stack two quality sessions back to back"
+  optional_cross_train: "easy 30-45min conversational-pace cycling on any rest day - doesn't count toward the 3-session cap, aids aerobic base without adding running impact"
   workouts:
-    # Week 1 (partial: Wed-Sat, no Monday since plan starts mid-week) - 2 sessions
-    - w1_interval          # Wed, Sep 2  (below current ability - easy re-entry)
+    # Week 1 (partial: Wed-Sat, plan starts mid-week) - 2 sessions
+    - w1a_runwalk          # Wed, Sep 2   [run: 12min]
     - rest                 # Thu, Sep 3
     - rest                 # Fri, Sep 4
-    - w1_long_interval     # Sat, Sep 5  (matches current ability: 2min run/1min walk)
+    - w1b_runwalk          # Sat, Sep 5   [run: 14min - 1 extra rep]
     - rest                 # Sun, Sep 6
 
     # Week 2 (Mon Sep 7 - Sat Sep 12) - 3 sessions
-    - w2_interval          # Mon, Sep 7
+    - w2a_runwalk          # Mon, Sep 7   [run: 15min, longer intervals]
     - rest                 # Tue, Sep 8
-    - w2_interval          # Wed, Sep 9
+    - w2b_runwalk_shortrest # Wed, Sep 9  [run: 15min, less rest between reps]
     - rest                 # Thu, Sep 10
     - rest                 # Fri, Sep 11
-    - w2_long_interval     # Sat, Sep 12
+    - w2c_runwalk          # Sat, Sep 12  [run: 16min, longer intervals again]
     - rest                 # Sun, Sep 13
 
     # Week 3 (Mon Sep 14 - Sat Sep 19) - 3 sessions
-    - w3_interval          # Mon, Sep 14
-    - rest                 # Tue, Sep 15
-    - w3_pace_work         # Wed, Sep 16
-    - rest                 # Thu, Sep 17
-    - rest                 # Fri, Sep 18
-    - w3_continuous_2_5k   # Sat, Sep 19
-    - rest                 # Sun, Sep 20
+    - w3a_runwalk_shortrest # Mon, Sep 14 [run: 16min, less rest]
+    - rest                  # Tue, Sep 15
+    - w3b_runwalk_long      # Wed, Sep 16 [run: 15min, 5min efforts]
+    - rest                  # Thu, Sep 17
+    - rest                  # Fri, Sep 18
+    - w3c_runwalk_finisher  # Sat, Sep 19 [run: 20min, closes w/ 8min unbroken]
+    - rest                  # Sun, Sep 20
 
-    # Week 4 (Mon Sep 21 - Sat Sep 26) - 3 sessions
-    - w4_pace_intervals    # Mon, Sep 21
-    - rest                 # Tue, Sep 22
-    - w4_easy_20min        # Wed, Sep 23
-    - rest                 # Thu, Sep 24
-    - rest                 # Fri, Sep 25
-    - w4_continuous_3_5k   # Sat, Sep 26
-    - rest                 # Sun, Sep 27
+    # Week 4 (Mon Sep 21 - Sat Sep 26) - 3 sessions, transition to continuous
+    - w4_runwalk_long       # Mon, Sep 21
+    - rest                  # Tue, Sep 22
+    - w4_continuous_20min   # Wed, Sep 23  <- first continuous run
+    - rest                  # Thu, Sep 24
+    - rest                  # Fri, Sep 25
+    - w4_continuous_3k      # Sat, Sep 26
+    - rest                  # Sun, Sep 27
 
     # Week 5 (Mon Sep 28 - Sat Oct 3) - 3 sessions
-    - w5_tempo_reps        # Mon, Sep 28  (moderate quality, not surge pace)
-    - rest                 # Tue, Sep 29
-    - w5_easy_4k           # Wed, Sep 30  <- bridges to target-pace 4k
-    - rest                 # Thu, Oct 1
-    - rest                 # Fri, Oct 2
-    - w5_continuous_4k     # Sat, Oct 3
-    - rest                 # Sun, Oct 4
+    - w5_continuous_3_5k    # Mon, Sep 28
+    - rest                  # Tue, Sep 29
+    - w5_pace_reps          # Wed, Sep 30  <- only pace-specific session in the plan
+    - rest                  # Thu, Oct 1
+    - rest                  # Fri, Oct 2
+    - w5_continuous_4k      # Sat, Oct 3   <- longest run before taper
+    - rest                  # Sun, Oct 4
 
-    # Week 6 (Race week: Mon Oct 5 - Sun Oct 11) - 2 taper sessions + race
-    - w6_taper_2k          # Mon, Oct 5
-    - rest                 # Tue, Oct 6
-    - w6_shakeout          # Wed, Oct 7
-    - rest                 # Thu, Oct 8
-    - rest                 # Fri, Oct 9
-    - w6_5k_race_day       # Sat, Oct 10 (race)
+    # Week 6 (Race week: Mon Oct 5 - Sun Oct 11) - taper, 2 sessions + race
+    - w6_taper_2k           # Mon, Oct 5
+    - rest                  # Tue, Oct 6
+    - w6_shakeout           # Wed, Oct 7
+    - rest                  # Thu, Oct 8
+    - rest                  # Fri, Oct 9
+    - rest                  # Sat, Oct 10   (extra rest day before race)
+    - w6_5k_race_day        # Sun, Oct 11
