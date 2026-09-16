@@ -13,6 +13,7 @@ import getpass
 
 __version__ = "0.1.0"
 
+
 def replace_variables(data, definitionsDict: dict):
     if isinstance(data, str):
         return re.sub(r'\$(\w+)', lambda m: definitionsDict.get(m.group(1), m.group(0)), data)
@@ -20,13 +21,16 @@ def replace_variables(data, definitionsDict: dict):
         return {k: replace_variables(v, definitionsDict) for k, v in data.items()}
     elif isinstance(data, list):
         return [replace_variables(item, definitionsDict) for item in data]
-    return data  
+    return data
 
 # Serialize to JSON
+
+
 def serialize(obj):
     if isinstance(obj, Enum):
         return obj.to_dict()
     return obj.__dict__
+
 
 def createWorkoutList(steps: list, stepCount: list):
     workoutSteps = []
@@ -35,6 +39,7 @@ def createWorkoutList(steps: list, stepCount: list):
         if workoutStep:
             workoutSteps.append(workoutStep)
     return workoutSteps
+
 
 def createWorkoutStep(step: dict, stepCount: list):
     stepType = None
@@ -56,7 +61,7 @@ def createWorkoutStep(step: dict, stepCount: list):
                 order = stepCount[0]
                 workoutSteps = createWorkoutList(stepDetail, stepCount)
                 return RepeatStep(
-                    stepId=order, stepOrder=order, 
+                    stepId=order, stepOrder=order,
                     workoutSteps=workoutSteps,
                     numberOfIterations=int(numIteration))
             case _:
@@ -97,14 +102,27 @@ def createWorkoutJson(workoutName: str, steps: list):
 
     return json.dumps(workout_model, default=serialize)
 
+
 def importWorkouts(workouts: dict, toDeletePrevious: bool, conn: Client):
     # delete previous workout with the same workout name
     allWorkouts = []
     if toDeletePrevious:
-        allWorkouts = conn.getAllWorkouts() 
+        allWorkouts = conn.getAllWorkouts()
+        allScheduledWorkouts = conn.getCalendarWorkouts(month=8, year=2026)[
+            'calendarItems']
+        allScheduledWorkouts.extend(conn.getCalendarWorkouts(
+            month=9, year=2026)['calendarItems'])
+
+    if toDeletePrevious:
+        filtered = [wo['id']
+                    for wo in allScheduledWorkouts if datetime.date(2026, 9, 1) <= datetime.date.fromisoformat(wo['date']) <= datetime.date(2026, 10, 16)
+                    and '_' in wo['title']
+                        or any(name == wo['title'] for name in workouts)]
+        for f in filtered:
+            conn.unscheduleWorkout(f)
 
     for name in workouts:
-        if toDeletePrevious and (name in [wo['workoutName'] for wo in allWorkouts]):
+        if toDeletePrevious:
             filtered = [wo for wo in allWorkouts if wo['workoutName'] == name]
             for toDelete in filtered:
                 conn.deleteWorkout(toDelete)
@@ -113,16 +131,19 @@ def importWorkouts(workouts: dict, toDeletePrevious: bool, conn: Client):
         jsonData = createWorkoutJson(name, steps)
         conn.importWorkout(jsonData)
 
+
 def scheduleWorkouts(startfrom: datetime, workouts: list, conn: Client):
     # Check valid date
     isValidDate = isinstance(startfrom, datetime.date)
     if (not isValidDate):
-        logger.error(f"""Invalid date {startfrom} format, example of proper date: 2024-10-06 """)
+        logger.error(
+            f"""Invalid date {startfrom} format, example of proper date: 2024-10-06 """)
         return False
 
     # Get all workouts plan from garmin acc
     allWorkouts = conn.getAllWorkouts()
-    workoutMap = {value['workoutName']: value['workoutId'] for _, value in enumerate(allWorkouts)}
+    workoutMap = {value['workoutName']: value['workoutId']
+                  for _, value in enumerate(allWorkouts)}
     logger.debug(f"""Workouts on garmin: {workoutMap}""")
 
     toScheduleDate = startfrom
@@ -133,23 +154,29 @@ def scheduleWorkouts(startfrom: datetime, workouts: list, conn: Client):
         toScheduleDate += datetime.timedelta(days=1)
 
         if not isinstance(toScheduleWorkouts, str):
-            logger.error(f"Invalid workout entry: {toScheduleWorkouts}. Skipping.")
+            logger.error(
+                f"Invalid workout entry: {toScheduleWorkouts}. Skipping.")
             continue
         # Split multiple workouts for a single day
-        dailyWorkouts = [workout.strip() for workout in toScheduleWorkouts.split(",")]
+        dailyWorkouts = [workout.strip()
+                         for workout in toScheduleWorkouts.split(",")]
 
         for workout in dailyWorkouts:
             if workout not in workoutMap:
-                logger.warning(f"Workout '{workout}' not found on Garmin Connect. Skipping.")
+                logger.warning(
+                    f"Workout '{workout}' not found on Garmin Connect. Skipping.")
                 continue
 
             workoutId = workoutMap[workout]
             dateJson = {"date": currentDate.strftime(DATE_FORMAT)}
             success = conn.scheduleWorkout(workoutId, dateJson)
             if (success):
-                logger.info(f"""Scheduled workout '{workout}' on date {currentDate}""")
+                logger.info(
+                    f"""Scheduled workout '{workout}' on date {currentDate}""")
             else:
-                logger.error(f"""Failed to schedule workout '{workout}' on date {currentDate}""")
+                logger.error(
+                    f"""Failed to schedule workout '{workout}' on date {currentDate}""")
+
 
 def main():
     logger.info(f"""Running Garmin Planner {__version__}""")
@@ -163,12 +190,11 @@ def main():
     logger.info(f"Current working directory: {os.getcwd()}")
 
     # default settings
-    settings = {"deleteSameNameWorkout": False}
-
+    settings = {"deleteSameNameWorkout": True}
 
     email = input("Enter your email: ")
     password = getpass.getpass('Enter your password: ')
-    garminCon = Client(email,password)
+    garminCon = Client(email, password)
 
     # parse input yaml file
     data = parseYaml(file_path)
@@ -184,12 +210,13 @@ def main():
         data = replace_variables(data, definitionsDict)
     if "workouts" in data:
         workouts = data['workouts']
-        importWorkouts(workouts=workouts, 
-                       toDeletePrevious=settings['deleteSameNameWorkout'], 
+        importWorkouts(workouts=workouts,
+                       toDeletePrevious=settings['deleteSameNameWorkout'],
                        conn=garminCon)
     if "schedulePlan" in data:
         schedulePlan = data['schedulePlan']
-        startDate = datetime.datetime.strptime(schedulePlan['start_from'],'%Y-%m-%d')
+        startDate = datetime.datetime.strptime(
+            schedulePlan['start_from'], '%Y-%m-%d')
         workouts = schedulePlan['workouts']
         scheduleWorkouts(startDate, workouts, garminCon)
 
