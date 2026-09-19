@@ -15,23 +15,59 @@
 # - Weeks 1-3 vary the interval shape session-to-session (more reps, less
 #   recovery, or longer efforts in turn) so every session feels like a
 #   small step up rather than three identical repeats of the same workout.
+#
+# Naming convention: "W<week> - <description> - <Day> - #<session>"
+# NOTE: names contain " #", which YAML treats as a comment, so all names
+# are quoted.
 
 definitions:
   EasyPace: "7:45-8:15"
   TargetPace: "7:00-7:30"
 
+# Previous workout names (before the rename). Use these to find and remove
+# the old workouts / scheduled entries from Garmin Connect.
+ld_workout_names:
+  - "w1a_runwalk"
+  - "w1b_runwalk"
+  - "w2a_runwalk"
+  - "w2b_runwalk_shortrest"
+  - "w2c_runwalk"
+  - "w3a_runwalk_shortrest"
+  - "w3b_runwalk_long"
+  - "2x 6mins/1x 8mins"
+  - "3x 8mins"
+  - "1x 15mins"
+  - "2400 meter"
+  - "3000 meter"
+  - "3x 1k"
+  - "4k"
+  - "2k taper"
+  - "15m taper"
+  - "5k race day"
+  # Earlier underscore-style names
+  - "w3c_runwalk_finisher"
+  - "w4_runwalk_long"
+  - "w4_continuous_20min"
+  - "w4_continuous_3k"
+  - "w5_continuous_3_5k"
+  - "w5_pace_reps"
+  - "w5_continuous_4k"
+  - "w6_taper_2k"
+  - "w6_shakeout"
+  - "w6_5k_race_day"
+
 workouts:
   # WEEK 1 - two sessions, second nudges up via one extra rep (same interval
   # difficulty, just "one more than last time" - the gentlest possible
   # felt-progress marker)
-  w1a_runwalk:
+  "W1 - Run Walk - Wed - #2":   # was w1a_runwalk
     - warmup: 5min
     - repeat(6):
         - run: 2min
         - recovery: 1min
     - cooldown: 5min
 
-  w1b_runwalk:
+  "W1 - Run Walk - Sat - #3":   # was w1b_runwalk
     - warmup: 5min
     - repeat(7):
         - run: 2min
@@ -40,21 +76,21 @@ workouts:
 
   # WEEK 2 - each session varies a different axis: interval length, then
   # recovery length, then interval length again
-  w2a_runwalk:
+  "W2 - Run Walk - Mon - #1":   # was w2a_runwalk
     - warmup: 5min
     - repeat(5):
         - run: 3min
         - recovery: 1min
     - cooldown: 5min
 
-  w2b_runwalk_shortrest:
+  "W2 - Run Walk - Wed - #2":   # was w2b_runwalk_shortrest
     - warmup: 5min
     - repeat(5):
         - run: 3min
         - recovery: 45sec
     - cooldown: 5min
 
-  w2c_runwalk:
+  "W2 - Run Walk - Sat - #3":   # was w2c_runwalk
     - warmup: 5min
     - repeat(4):
         - run: 4min
@@ -64,21 +100,21 @@ workouts:
   # WEEK 3 - shorter recovery again, then longer single efforts, then a
   # finisher that previews week 4's continuous running with an unbroken
   # 8min close
-  w3a_runwalk_shortrest:
+  "W3 - Run Walk - Mon - #1":   # was w3a_runwalk_shortrest
     - warmup: 5min
     - repeat(4):
         - run: 4min
         - recovery: 45sec
     - cooldown: 5min
 
-  w3b_runwalk_long:
+  "W3 - Run Walk - Wed - #2":   # was w3b_runwalk_long
     - warmup: 5min
     - repeat(3):
         - run: 5min
         - recovery: 1min
     - cooldown: 5min
 
-  2x 6mins/1x 8mins:
+  "W3 - Run Walk - Sat - #3":   # was 2x 6mins/1x 8mins
     - warmup: 5min
     - repeat(2):
         - run: 6min
@@ -87,53 +123,53 @@ workouts:
     - cooldown: 5min
 
   # WEEK 4 - transition from intervals to continuous running
-  3x 8mins:
+  "W4 - 3x 8mins - Mon - #1":   # was 3x 8mins
     - warmup: 5min
     - repeat(3):
         - run: 8min
         - recovery: 2min
     - cooldown: 5min
 
-  1x 15mins:
+  "W4 - 1x 15mins - Wed - #2":  # was 1x 15mins
     - warmup: 5min
     - run: 15min
     - cooldown: 5min
 
-  2400 meter:
+  "W4 - 2400 meter - Sat - #3":  # was 2400 meter
     - warmup: 5min
     - run: 2400m
     - cooldown: 5min
 
   # WEEK 5 - build distance, first (and only) taste of race pace
-  3000 meter:
+  "W5 - 3000 meter - Mon - #1":  # was 3000 meter
     - warmup: 5min
     - run: 3000m
     - cooldown: 5min
 
-  3x 1k:
+  "W5 - 3x 1k - Wed - #2":      # was 3x 1k
     - warmup: 5min
     - repeat(3):
         - run: 1000m
         - recovery: 2min
     - cooldown: 5min
 
-  4k:
+  "W5 - 4k - Sat - #3":         # was 4k
     - warmup: 5min
     - run: 4000m
     - cooldown: 5min
 
   # WEEK 6 - taper
-  2k taper:
+  "W6 - 2k taper - Mon - #1":   # was 2k taper
     - warmup: 5min
     - run: 2000m
     - cooldown: 5min
 
-  15m taper:
+  "W6 - 15m taper - Thu - #2":  # was 15m taper
     - warmup: 5min
     - run: 15min
     - cooldown: 5min
 
-  5k race day:
+  "W6 - 5k Race Day - Sun - #3":  # was 5k race day
     - run: 5000m
 
 schedulePlan:
@@ -145,53 +181,53 @@ schedulePlan:
   optional_cross_train: "easy 30-45min conversational-pace cycling on any rest day - doesn't count toward the 3-session cap, aids aerobic base without adding running impact"
   workouts:
     # Week 1 (partial: Wed-Sat, plan starts mid-week) - 2 sessions
-    - w1a_runwalk          # Wed, Sep 2   [run: 12min]
-    - rest                 # Thu, Sep 3
-    - rest                 # Fri, Sep 4
-    - w1b_runwalk          # Sat, Sep 5   [run: 14min - 1 extra rep]
-    - rest                 # Sun, Sep 6
+    - "W1 - Run Walk - Wed - #2"    # Wed, Sep 2   [run: 12min]
+    - rest                                  # Thu, Sep 3
+    - rest                                  # Fri, Sep 4
+    - "W1 - Run Walk - Sat - #3"    # Sat, Sep 5   [run: 14min - 1 extra rep]
+    - rest                                  # Sun, Sep 6
 
     # Week 2 (Mon Sep 7 - Sat Sep 12) - 3 sessions
-    - w2a_runwalk          # Mon, Sep 7   [run: 15min, longer intervals]
-    - rest                 # Tue, Sep 8
-    - w2b_runwalk_shortrest # Wed, Sep 9  [run: 15min, less rest between reps]
-    - rest                 # Thu, Sep 10
-    - rest                 # Fri, Sep 11
-    - w2c_runwalk          # Sat, Sep 12  [run: 16min, longer intervals again]
-    - rest                 # Sun, Sep 13
+    - "W2 - Run Walk - Mon - #1"    # Mon, Sep 7   [run: 15min, longer intervals]
+    - rest                                  # Tue, Sep 8
+    - "W2 - Run Walk - Wed - #2"    # Wed, Sep 9   [run: 15min, less rest between reps]
+    - rest                                  # Thu, Sep 10
+    - rest                                  # Fri, Sep 11
+    - "W2 - Run Walk - Sat - #3"    # Sat, Sep 12  [run: 16min, longer intervals again]
+    - rest                                  # Sun, Sep 13
 
     # Week 3 (Mon Sep 14 - Sat Sep 19) - 3 sessions
-    - w3a_runwalk_shortrest # Mon, Sep 14 [run: 16min, less rest]
-    - rest                  # Tue, Sep 15
-    - w3b_runwalk_long      # Wed, Sep 16 [run: 15min, 5min efforts]
-    - rest                  # Thu, Sep 17
-    - rest                  # Fri, Sep 18
-    - 2x 6mins/1x 8mins  # Sat, Sep 19 [run: 20min, closes w/ 8min unbroken]
-    - rest                  # Sun, Sep 20
+    - "W3 - Run Walk - Mon - #1"    # Mon, Sep 14  [run: 16min, less rest]
+    - rest                                  # Tue, Sep 15
+    - "W3 - Run Walk - Wed - #2"    # Wed, Sep 16  [run: 15min, 5min efforts]
+    - rest                                  # Thu, Sep 17
+    - rest                                  # Fri, Sep 18
+    - "W3 - Run Walk - Sat - #3"    # Sat, Sep 19  [run: 20min, closes w/ 8min unbroken]
+    - rest                                  # Sun, Sep 20
 
     # Week 4 (Mon Sep 21 - Sat Sep 26) - 3 sessions, transition to continuous
-    - 3x 8mins       # Mon, Sep 21
-    - rest                  # Tue, Sep 22
-    - 1x 15mins   # Wed, Sep 23  <- first continuous run
-    - rest                  # Thu, Sep 24
-    - rest                  # Fri, Sep 25
-    - 2400 meter      # Sat, Sep 26
-    - rest                  # Sun, Sep 27
+    - "W4 - 3x 8mins - Mon - #1"    # Mon, Sep 21
+    - rest                                  # Tue, Sep 22
+    - "W4 - 1x 15mins - Wed - #2"   # Wed, Sep 23  <- first continuous run
+    - rest                                  # Thu, Sep 24
+    - rest                                  # Fri, Sep 25
+    - "W4 - 2400 meter - Sat - #3"  # Sat, Sep 26
+    - rest                                  # Sun, Sep 27
 
     # Week 5 (Mon Sep 28 - Sat Oct 3) - 3 sessions
-    - 3000 meter    # Mon, Sep 28
-    - rest                  # Tue, Sep 29
-    - 3x 1k          # Wed, Sep 30  <- only pace-specific session in the plan
-    - rest                  # Thu, Oct 1
-    - rest                  # Fri, Oct 2
-    - 4k      # Sat, Oct 3   <- longest run before taper
-    - rest                  # Sun, Oct 4
+    - "W5 - 3000 meter - Mon - #1"  # Mon, Sep 28
+    - rest                                  # Tue, Sep 29
+    - "W5 - 3x 1k - Wed - #2"       # Wed, Sep 30  <- only pace-specific session in the plan
+    - rest                                  # Thu, Oct 1
+    - rest                                  # Fri, Oct 2
+    - "W5 - 4k - Sat - #3"          # Sat, Oct 3   <- longest run before taper
+    - rest                                  # Sun, Oct 4
 
     # Week 6 (Race week: Mon Oct 5 - Sun Oct 11) - taper, 2 sessions + race
-    - 2k taper           # Mon, Oct 5
-    - rest                  # Tue, Oct 6
-    - rest           # Wed, Oct 7
-    - 15m taper                  # Thu, Oct 8
-    - rest                  # Fri, Oct 9
-    - rest                  # Sat, Oct 10   (extra rest day before race)
-    - 5k race day        # Sun, Oct 11
+    - "W6 - 2k taper - Mon - #1"    # Mon, Oct 5
+    - rest                                  # Tue, Oct 6
+    - rest                                  # Wed, Oct 7
+    - "W6 - 15m taper - Thu - #2"   # Thu, Oct 8
+    - rest                                  # Fri, Oct 9
+    - rest                                  # Sat, Oct 10   (extra rest day before race)
+    - "W6 - 5k Race Day - Sun - #3" # Sun, Oct 11

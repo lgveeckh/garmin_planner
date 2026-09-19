@@ -103,33 +103,32 @@ def createWorkoutJson(workoutName: str, steps: list):
     return json.dumps(workout_model, default=serialize)
 
 
-def importWorkouts(workouts: dict, toDeletePrevious: bool, conn: Client):
-    # delete previous workout with the same workout name
-    allWorkouts = []
+def importWorkouts(workouts: dict, old_workouts: list, toDeletePrevious: bool, conn: Client):
     if toDeletePrevious:
-        allWorkouts = conn.getAllWorkouts()
-        allScheduledWorkouts = conn.getCalendarWorkouts(month=8, year=2026)[
-            'calendarItems']
-        allScheduledWorkouts.extend(conn.getCalendarWorkouts(
-            month=9, year=2026)['calendarItems'])
+        namesToDelete = set(workouts) | set(old_workouts or [])
 
-    if toDeletePrevious:
-        filtered = [wo['id']
-                    for wo in allScheduledWorkouts if datetime.date(2026, 9, 1) <= datetime.date.fromisoformat(wo['date']) <= datetime.date(2026, 10, 16)
-                    and '_' in wo['title']
-                        or any(name == wo['title'] for name in workouts)]
-        for f in filtered:
-            conn.unscheduleWorkout(f)
+        # 1) Unschedule matching calendar entries
+        scheduled = []
+        for month in (8, 9):
+            scheduled.extend(conn.getCalendarWorkouts(month=month, year=2026)['calendarItems'])
 
-    for name in workouts:
-        if toDeletePrevious:
-            filtered = [wo for wo in allWorkouts if wo['workoutName'] == name]
-            for toDelete in filtered:
-                conn.deleteWorkout(toDelete)
+        toUnschedule = {
+            wo['id'] for wo in scheduled
+            if wo.get('itemType') == 'workout'
+            and wo.get('title') in namesToDelete
+        }
+        for scheduleId in toUnschedule:
+            conn.unscheduleWorkout(scheduleId)
 
-        steps = workouts[name]
-        jsonData = createWorkoutJson(name, steps)
-        conn.importWorkout(jsonData)
+        # 2) Delete matching workouts, one pass
+        for wo in conn.getAllWorkouts():
+            if wo['workoutName'] in namesToDelete:
+                logger.info(f"Deleting workout '{wo['workoutName']}/{wo['workoutId']}'")
+                conn.deleteWorkout(wo)
+
+    # 3) Import
+    for name, steps in workouts.items():
+        conn.importWorkout(createWorkoutJson(name, steps))
 
 
 def scheduleWorkouts(startfrom: datetime, workouts: list, conn: Client):
@@ -144,7 +143,6 @@ def scheduleWorkouts(startfrom: datetime, workouts: list, conn: Client):
     allWorkouts = conn.getAllWorkouts()
     workoutMap = {value['workoutName']: value['workoutId']
                   for _, value in enumerate(allWorkouts)}
-    logger.debug(f"""Workouts on garmin: {workoutMap}""")
 
     toScheduleDate = startfrom
 
@@ -210,8 +208,10 @@ def main():
         data = replace_variables(data, definitionsDict)
     if "workouts" in data:
         workouts = data['workouts']
+        old_workouts = data.get('old_workout_names')
         importWorkouts(workouts=workouts,
                        toDeletePrevious=settings['deleteSameNameWorkout'],
+                       old_workouts=old_workouts,
                        conn=garminCon)
     if "schedulePlan" in data:
         schedulePlan = data['schedulePlan']
